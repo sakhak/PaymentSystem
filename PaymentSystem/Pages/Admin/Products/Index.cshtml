@@ -1,0 +1,10 @@
+@page
+@model PaymentSystem.Pages.Admin.Products.IndexModel
+@{ ViewData["Title"] = "Manage products"; }
+<div class="section-heading"><div><p class="eyebrow">ADMIN / CATALOG</p><h1 class="page-title">Manage products</h1></div><a class="btn btn-dark" asp-page="Edit">Add product</a></div>
+@if (Model.Notice != null) { <div class="alert alert-success" role="status">@Model.Notice</div> }
+<form method="get" class="search-bar"><label for="Search" class="visually-hidden">Search products</label><input asp-for="Search" class="form-control" placeholder="Search by product name" /><button class="btn btn-outline-dark">Search</button></form>
+<div class="table-panel table-responsive"><table class="table align-middle"><thead><tr><th>Product</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+@foreach (var product in Model.Products) { <tr><td><strong>@product.Name</strong><div class="small text-secondary">#@product.Id</div></td><td>@product.Price.ToString("N2") @product.Currency</td><td><span class="status-badge">@(product.IsActive ? "Active" : "Archived")</span></td><td><div class="d-flex gap-2"><a asp-page="Edit" asp-route-id="@product.Id" class="btn btn-sm btn-outline-dark">Edit</a><form method="post" asp-page-handler="Toggle" asp-route-id="@product.Id"><button class="btn btn-sm btn-outline-secondary">@(product.IsActive ? "Archive" : "Publish")</button></form></div></td></tr> }
+@if (Model.Products.Count == 0) { <tr><td colspan="4" class="empty-state">No products found. Add your first product to open the catalog.</td></tr> }
+</tbody></table></div><p class="small text-secondary">Showing up to 100 results. Archive products to remove them from the catalog without deleting payment history.</p>

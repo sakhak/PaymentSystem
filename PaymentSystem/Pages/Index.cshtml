@@ -1,0 +1,41 @@
+@page
+@model PaymentSystem.Pages.IndexModel
+@using PaymentSystem.Services
+@{ ViewData["Title"] = "Overview"; }
+<div data-live-workspace>
+    <section class="dashboard-intro">
+        <div><p class="eyebrow">@(User.IsInRole("Admin") ? "PAYMENT OPERATIONS" : "MY WORKSPACE")</p><h1 class="page-title">Overview</h1><p class="hero-description">Your payments and recent activity, all in one place.</p></div>
+        <div class="d-flex gap-2"><a class="btn btn-outline-dark" asp-page="/Products/Index">Browse products</a><a class="btn btn-dark" asp-page="/Payments/Create">+ New payment</a></div>
+    </section>
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-xl-3"><article class="metric-card"><span>Total payments</span><i class="metric-icon" aria-hidden="true">&#9638;</i><strong data-metric="total">@Model.Total</strong><small>All recorded orders</small></article></div>
+        <div class="col-6 col-xl-3"><article class="metric-card metric-paid"><span>Successful payments</span><i class="metric-icon" aria-hidden="true">&#10003;</i><strong data-metric="paid">@Model.Paid</strong><small>Confirmed by Bakong</small></article></div>
+        <div class="col-6 col-xl-3"><article class="metric-card metric-pending"><span>Pending payments</span><i class="metric-icon" aria-hidden="true">&#9684;</i><strong data-metric="pending">@Model.Pending</strong><small>Awaiting bank confirmation</small></article></div>
+        <div class="col-6 col-xl-3"><article class="metric-card"><span>Expired QR codes</span><i class="metric-icon" aria-hidden="true">&#9719;</i><strong data-metric="expired">@Model.Expired</strong><small>Payment window closed</small></article></div>
+    </div>
+    <section class="getting-started mb-4">
+        <div><p class="eyebrow">COLLECTIONS</p><h2>Confirmed totals</h2><p>Verified payments only. USD and KHR are reported separately.</p></div>
+        <div class="align-self-center">
+            @foreach (var currency in new[] { "USD", "KHR" })
+            {
+                <div class="d-flex justify-content-between py-2"><span class="text-secondary small">@currency</span><strong><span data-revenue="@currency">@Model.Revenue.GetValueOrDefault(currency).ToString("N2")</span> <small class="text-secondary">@currency</small></strong></div>
+            }
+        </div>
+    </section>
+    <div class="section-heading mt-5 mb-3"><div><h2 class="mb-1">Recent transactions</h2><span id="workspace-updated" class="small text-secondary">Statuses update automatically</span></div><a asp-page="/Payments/Index">View all payments &rarr;</a></div>
+    <div class="table-panel table-responsive">
+        <table class="table align-middle">
+            <thead><tr><th>Order reference</th><th>Amount</th><th>Status</th><th>Created (UTC)</th><th class="text-end">Action</th></tr></thead>
+            <tbody>
+                @foreach (var payment in Model.Recent)
+                {
+                    <tr><td><strong>@payment.OrderId</strong><div class="small text-secondary">@(payment.ProductName ?? "Custom payment")</div></td><td>@payment.Amount.ToString("N2") <span class="text-secondary">@payment.Currency</span></td><td><span data-payment-status="@payment.Id" class="status-badge status-@PaymentService.Status(payment).ToLowerInvariant()">@PaymentService.Status(payment)</span></td><td class="text-secondary">@payment.CreatedAt.ToString("dd MMM yyyy, HH:mm")</td><td class="text-end"><a asp-page="/Payments/Details" asp-route-id="@payment.Id">View details</a></td></tr>
+                }
+                @if (Model.Recent.Count == 0)
+                {
+                    <tr><td colspan="5" class="empty-state"><h3>No payments yet</h3><p class="text-secondary">Create a payment or browse the catalog to place your first order.</p><a asp-page="/Products/Index" class="btn btn-outline-dark">Explore products</a></td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

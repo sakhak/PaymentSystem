@@ -1,0 +1,10 @@
+@page
+@model PaymentSystem.Pages.Products.IndexModel
+@{ ViewData["Title"] = "Products"; }
+<div class="section-heading"><div><p class="eyebrow">THE CATALOG</p><h1 class="page-title">Find your next order.</h1><p class="text-secondary">Choose a product and pay securely with KHQR.</p></div>@if (User.IsInRole("Admin")) { <a class="btn btn-outline-dark" asp-page="/Admin/Products/Index">Manage catalog</a> }</div>
+<form method="get" class="search-bar"><label for="Search" class="visually-hidden">Search products</label><input asp-for="Search" class="form-control" placeholder="Search products" /><button class="btn btn-dark">Search</button></form>
+<div class="row g-4">
+@foreach (var product in Model.Products) { <div class="col-md-6 col-xl-4"><article class="product-card"><div class="product-art" aria-hidden="true">@product.Name[..1].ToUpperInvariant()</div><div class="p-4"><p class="eyebrow">PRODUCT #@product.Id</p><h2 class="h4">@product.Name</h2><p class="product-description">@product.Description</p><div class="d-flex align-items-center justify-content-between gap-3"><strong class="product-price">@product.Price.ToString("N2") <small>@product.Currency</small></strong><a asp-page="/Payments/Create" asp-route-productId="@product.Id" class="btn btn-dark">Buy now</a></div></div></article></div> }
+</div>
+@if (Model.Products.Count == 0) { <div class="empty-state form-panel text-center"><h2 class="h4">No products found</h2><p class="text-secondary">Try a different search. Administrators can add products from the admin area.</p></div> }
+<nav class="d-flex gap-3 align-items-center mt-4" aria-label="Catalog pages">@if (Model.PageNumber > 1) { <a asp-route-PageNumber="@(Model.PageNumber - 1)" asp-route-Search="@Model.Search">Previous</a> }<span class="small text-secondary">Page @Model.PageNumber of @Model.TotalPages</span>@if (Model.PageNumber < Model.TotalPages) { <a asp-route-PageNumber="@(Model.PageNumber + 1)" asp-route-Search="@Model.Search">Next</a> }</nav>

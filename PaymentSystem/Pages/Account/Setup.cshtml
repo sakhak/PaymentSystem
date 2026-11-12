@@ -1,0 +1,10 @@
+@page
+@model PaymentSystem.Pages.Account.SetupModel
+@{ ViewData["Title"] = "Create your administrator"; }
+<div class="auth-card"><p class="eyebrow">FIRST-TIME SETUP</p><h1 class="page-title">Welcome to KHQR.</h1><p class="text-secondary">Create your administrator account. This setup is available only locally during development and closes after the first account is created.</p>
+<form method="post"><div asp-validation-summary="All" class="text-danger" role="alert"></div>
+<div class="mb-3"><label asp-for="Input.DisplayName" class="form-label">Your name</label><input asp-for="Input.DisplayName" class="form-control" autocomplete="name" /></div>
+<div class="mb-3"><label asp-for="Input.Email" class="form-label"></label><input asp-for="Input.Email" class="form-control" autocomplete="email" /></div>
+<div class="mb-3"><label asp-for="Input.Password" class="form-label"></label><input asp-for="Input.Password" class="form-control" autocomplete="new-password" /><small>10+ characters, uppercase, lowercase, number, and symbol.</small></div>
+<div class="mb-4"><label asp-for="Input.ConfirmPassword" class="form-label">Confirm password</label><input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" /></div>
+<button class="btn btn-dark w-100">Create administrator</button></form></div>

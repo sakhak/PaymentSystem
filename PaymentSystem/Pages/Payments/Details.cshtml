@@ -1,0 +1,71 @@
+@page "{id:int}"
+@model PaymentSystem.Pages.Payments.DetailsModel
+@{ ViewData["Title"] = "Payment details"; }
+
+<div class="section-heading">
+    <div><p class="eyebrow">PAYMENTS / TRANSACTION DETAILS</p><h1 class="page-title">Payment details</h1><p class="text-secondary mb-0">@Model.Payment.OrderId</p></div>
+    <a asp-page="Index" class="btn btn-outline-secondary">Back to payments</a>
+</div>
+@if (Model.IsTestEnvironment)
+{
+    <div class="environment-notice" role="note"><strong>Test environment (SIT).</strong> Real banking app payments cannot be reconciled here. Ask your administrator to configure production verification before accepting real payments.</div>
+}
+@if (Model.Notice != null)
+{
+    <div class="alert alert-info" role="status">@Model.Notice</div>
+}
+
+<div id="live-payment" data-status-url="@Url.Page("Details", "Status", new { id = Model.Payment.Id })"
+     data-initial-status="@Model.Status" class="row g-4">
+    <div class="col-xl-5">
+        <section class="qr-panel text-center">
+            <div class="checkout-heading"><span class="eyebrow">KHQR CHECKOUT</span><span id="payment-status" class="status-badge status-@Model.Status.ToLowerInvariant()" role="status">@Model.Status</span></div>
+            <p class="text-secondary small mt-4 mb-1">Amount to pay</p>
+            <h2 class="checkout-amount">@Model.Payment.Amount.ToString("N2") <small>@Model.Payment.Currency</small></h2>
+            @if (Model.QrImage != null)
+            {
+                <div id="qr-container">
+                    <img class="qr-image" src="@Model.QrImage" alt="KHQR code for order @Model.Payment.OrderId" />
+                    <p class="small text-secondary">Scan with your banking app to complete payment.</p>
+                </div>
+                <div id="expiry-panel" class="expiry-panel">QR expires in <strong id="countdown" data-expires="@(DateTime.SpecifyKind(Model.Payment.ExpiresAt, DateTimeKind.Utc).ToString("O"))">--:--</strong></div>
+            }
+            <div id="payment-success" class="payment-success" hidden="@(Model.Status != "Paid")">
+                <div class="success-mark" aria-hidden="true">&#10003;</div><h3>Payment received</h3><p>Verified securely with Bakong.</p>
+            </div>
+            <div id="payment-expired" class="expired-message" hidden="@(Model.Status != "Expired")">
+                <h3 class="h5">This QR has expired</h3><p class="text-secondary small">Already paid within the payment window? We can still reconcile your bank transaction.</p>
+                <a asp-page="Create" class="btn btn-outline-dark btn-sm">Create a new payment</a>
+            </div>
+            <form id="verify-form" method="post" asp-page-handler="Verify" hidden="@(Model.Status == "Paid")" class="mt-4">
+                <button id="verify-button" class="btn btn-dark w-100">Check payment now</button>
+            </form>
+            <p class="secure-note">Verified transactions only. No manual paid status.</p>
+        </section>
+    </div>
+    <div class="col-xl-7">
+        <section class="form-panel verification-panel mb-4" aria-labelledby="verification-heading">
+            <div class="section-heading mb-3"><h2 id="verification-heading" class="h6 mb-0">Payment verification</h2><span id="connection-status" class="live-indicator">Live updates</span></div>
+            <p id="verification-message" class="mb-2" role="status" aria-live="polite">@(Model.Payment.VerificationMessage ?? "Automatic bank checks are starting. You can keep this page open.")</p>
+            <p class="small text-secondary mb-0">Last bank check: <time id="last-checked">@(Model.Payment.LastCheckedAt?.ToString("dd MMM yyyy HH:mm:ss 'UTC'") ?? "Not checked yet")</time></p>
+            <noscript><p class="text-secondary small mt-3">Enable JavaScript for live updates, or use Check payment now to verify manually.</p></noscript>
+        </section>
+        <section class="form-panel">
+            <h2 class="h6 mb-4">Transaction information</h2>
+            <dl class="details-list">
+                <dt>Order reference</dt><dd class="font-monospace">@Model.Payment.OrderId</dd>
+                <dt>Product</dt><dd>@(Model.Payment.ProductName ?? "Custom payment")</dd>
+                <dt>Quantity</dt><dd>@Model.Payment.Quantity</dd>
+                <dt>Created</dt><dd>@Model.Payment.CreatedAt.ToString("dd MMM yyyy HH:mm:ss 'UTC'")</dd>
+                <dt>QR expiry</dt><dd>@Model.Payment.ExpiresAt.ToString("dd MMM yyyy HH:mm:ss 'UTC'")</dd>
+                <dt>Confirmed</dt><dd id="confirmed-at">@(Model.Payment.PaidAt?.ToString("dd MMM yyyy HH:mm:ss 'UTC'") ?? "Awaiting bank confirmation")</dd>
+                <dt>Receiving account</dt><dd class="text-break">@(Model.Payment.ReceiverAccountId ?? "Unavailable for legacy payment")</dd>
+                <dt>Bank reference</dt><dd id="transaction-hash" class="text-break font-monospace small">@(Model.Payment.TransactionHash ?? "Available after verification")</dd>
+            </dl>
+        </section>
+    </div>
+</div>
+@section Scripts
+{
+    <script src="~/js/payment.js" asp-append-version="true" defer></script>
+}

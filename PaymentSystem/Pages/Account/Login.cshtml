@@ -1,0 +1,8 @@
+@page
+@model PaymentSystem.Pages.Account.LoginModel
+@{ ViewData["Title"] = "Sign in"; }
+<div class="auth-card"><p class="eyebrow">WELCOME BACK</p><h1 class="page-title">Your workspace awaits.</h1><p class="text-secondary">Sign in to manage your orders and payments.</p>
+<form method="post"><input type="hidden" asp-for="ReturnUrl" /><div asp-validation-summary="All" class="text-danger" role="alert"></div>
+<div class="mb-3"><label asp-for="Input.Email" class="form-label"></label><input asp-for="Input.Email" class="form-control" autocomplete="username" /></div>
+<div class="mb-4"><label asp-for="Input.Password" class="form-label"></label><input asp-for="Input.Password" class="form-control" autocomplete="current-password" /></div>
+<button class="btn btn-dark w-100">Sign in</button></form><p class="mt-4 mb-0">New here? <a asp-page="Register">Create an account</a></p></div>

@@ -1,0 +1,12 @@
+@page
+@model PaymentSystem.Pages.Account.ManageModel
+@{ ViewData["Title"] = "My account"; }
+<div class="auth-card"><p class="eyebrow">MY ACCOUNT</p><h1 class="page-title">Profile &amp; security</h1><p class="text-secondary">@Model.Email</p>
+@if (Model.Notice != null) { <div class="alert alert-success" role="status">@Model.Notice</div> }
+<form method="post"><div asp-validation-summary="All" class="text-danger" role="alert"></div>
+<div class="mb-4"><label asp-for="Input.DisplayName" class="form-label">Display name</label><input asp-for="Input.DisplayName" class="form-control" /></div>
+<h2 class="h5">Change password</h2><p class="text-secondary small">Leave these fields blank to keep your password.</p>
+<div class="mb-3"><label asp-for="Input.CurrentPassword" class="form-label">Current password</label><input asp-for="Input.CurrentPassword" class="form-control" autocomplete="current-password" /></div>
+<div class="mb-3"><label asp-for="Input.NewPassword" class="form-label">New password</label><input asp-for="Input.NewPassword" class="form-control" autocomplete="new-password" /></div>
+<div class="mb-4"><label asp-for="Input.ConfirmPassword" class="form-label">Confirm new password</label><input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" /></div>
+<button class="btn btn-dark">Save changes</button></form></div>

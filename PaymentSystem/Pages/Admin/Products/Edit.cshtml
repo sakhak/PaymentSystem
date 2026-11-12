@@ -1,0 +1,10 @@
+@page "{id:int?}"
+@model PaymentSystem.Pages.Admin.Products.EditModel
+@{ ViewData["Title"] = RouteData.Values["id"] == null ? "Add product" : "Edit product"; }
+<p class="eyebrow">ADMIN / CATALOG</p><h1 class="page-title mb-4">@ViewData["Title"]</h1>
+<form method="post" class="form-panel"><div asp-validation-summary="All" class="text-danger" role="alert"></div>
+<div class="mb-3"><label asp-for="Input.Name" class="form-label"></label><input asp-for="Input.Name" class="form-control" maxlength="100" /></div>
+<div class="mb-3"><label asp-for="Input.Description" class="form-label"></label><textarea asp-for="Input.Description" class="form-control" rows="4" maxlength="1000"></textarea></div>
+<div class="row"><div class="col-sm-7 mb-3"><label asp-for="Input.Price" class="form-label"></label><input asp-for="Input.Price" type="number" step="0.01" min="0.01" class="form-control" /></div><div class="col-sm-5 mb-3"><label asp-for="Input.Currency" class="form-label"></label><select asp-for="Input.Currency" class="form-select"><option>USD</option><option>KHR</option></select></div></div>
+<div class="form-check mb-4"><input asp-for="Input.IsActive" class="form-check-input" /><label asp-for="Input.IsActive" class="form-check-label">Published in catalog</label></div>
+<button class="btn btn-dark">Save product</button> <a asp-page="Index" class="btn btn-outline-secondary">Cancel</a></form>

@@ -1,0 +1,4 @@
+@page
+@attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+@{ ViewData["Title"] = "Access denied"; }
+<div class="auth-card"><p class="eyebrow">403 / ACCESS DENIED</p><h1 class="page-title">This area is restricted.</h1><p>You don't have permission to access this page.</p><a class="btn btn-dark" asp-page="/Index">Back to dashboard</a></div>

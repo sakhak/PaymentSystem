@@ -1,0 +1,45 @@
+@page
+@model PaymentSystem.Pages.Payments.IndexModel
+@using PaymentSystem.Services
+@{ ViewData["Title"] = "Payments"; }
+<div data-live-workspace>
+    <div class="section-heading">
+        <div><p class="eyebrow">@(User.IsInRole("Admin") ? "ALL TRANSACTIONS" : "MY TRANSACTIONS")</p><h1 class="page-title">Payments</h1><p class="text-secondary mb-0">Search orders and follow their bank confirmation status.</p></div>
+        <a asp-page="Create" class="btn btn-dark">+ New payment</a>
+    </div>
+    <form method="get" class="search-bar">
+        <label for="Search" class="visually-hidden">Order reference</label><input asp-for="Search" class="form-control" placeholder="Search by order reference" />
+        <label for="Status" class="visually-hidden">Payment status</label>
+        <select asp-for="Status" class="form-select w-auto"><option value="">All statuses</option><option>Pending</option><option>Paid</option><option>Expired</option></select>
+        <label class="d-flex align-items-center gap-2 small"><input asp-for="IssuesOnly" class="form-check-input mt-0" />Needs attention</label>
+        <button class="btn btn-outline-dark">Apply filters</button>
+    </form>
+    <div class="section-heading mb-3"><span id="workspace-updated" class="small text-secondary">Statuses update automatically</span><span class="small text-secondary">Page @Model.PageNumber of @Model.TotalPages</span></div>
+    <div class="table-panel table-responsive">
+        <table class="table align-middle">
+            <thead><tr><th>Order reference</th><th>Amount</th><th>Status</th><th>Last bank check</th><th>Created (UTC)</th><th class="text-end">Action</th></tr></thead>
+            <tbody>
+                @foreach (var payment in Model.Payments)
+                {
+                    <tr>
+                        <td><strong>@payment.OrderId</strong><div class="small text-secondary">@(payment.ProductName ?? "Custom payment")</div></td>
+                        <td class="text-nowrap">@payment.Amount.ToString("N2") <span class="text-secondary">@payment.Currency</span></td>
+                        <td><span data-payment-status="@payment.Id" class="status-badge status-@PaymentService.Status(payment).ToLowerInvariant()">@PaymentService.Status(payment)</span></td>
+                        <td><span class="text-secondary">@(payment.LastCheckedAt?.ToString("HH:mm:ss 'UTC'") ?? "Not checked")</span>@if (payment.VerificationCode is not (null or "Checking" or "NotFound" or "Verified")) { <div class="small text-warning-emphasis">Needs attention</div> }</td>
+                        <td class="text-secondary text-nowrap">@payment.CreatedAt.ToString("dd MMM yyyy HH:mm")</td>
+                        <td class="text-end text-nowrap"><a asp-page="Details" asp-route-id="@payment.Id">View details</a></td>
+                    </tr>
+                }
+                @if (Model.Payments.Count == 0)
+                {
+                    <tr><td colspan="6" class="empty-state"><h3 class="h6">No matching payments</h3><p class="text-secondary mb-0">Try a different order reference or change the status filter.</p></td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <nav class="d-flex gap-3 align-items-center mt-4 small" aria-label="Payment pages">
+        @if (Model.PageNumber > 1) { <a class="btn btn-sm btn-outline-secondary" asp-route-PageNumber="@(Model.PageNumber - 1)" asp-route-Search="@Model.Search" asp-route-Status="@Model.Status" asp-route-IssuesOnly="@Model.IssuesOnly">Previous</a> }
+        <span class="text-secondary">Page @Model.PageNumber of @Model.TotalPages</span>
+        @if (Model.PageNumber < Model.TotalPages) { <a class="btn btn-sm btn-outline-secondary" asp-route-PageNumber="@(Model.PageNumber + 1)" asp-route-Search="@Model.Search" asp-route-Status="@Model.Status" asp-route-IssuesOnly="@Model.IssuesOnly">Next</a> }
+    </nav>
+</div>

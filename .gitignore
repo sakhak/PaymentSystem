@@ -1,0 +1,8 @@
+.vs/
+**/bin/
+**/obj/
+**/*.csproj.user
+**/payments.db*
+**/backups/
+**/__pycache__/
+**/.env

@@ -1,0 +1,10 @@
+@page
+@model PaymentSystem.Pages.Account.RegisterModel
+@{ ViewData["Title"] = "Create account"; }
+<div class="auth-card"><p class="eyebrow">GET STARTED</p><h1 class="page-title">Create your account.</h1><p class="text-secondary">Browse products, generate KHQR payments, and track your orders.</p>
+<form method="post"><div asp-validation-summary="All" class="text-danger" role="alert"></div>
+<div class="mb-3"><label asp-for="Input.DisplayName" class="form-label">Your name</label><input asp-for="Input.DisplayName" class="form-control" autocomplete="name" /></div>
+<div class="mb-3"><label asp-for="Input.Email" class="form-label"></label><input asp-for="Input.Email" class="form-control" autocomplete="email" /></div>
+<div class="mb-3"><label asp-for="Input.Password" class="form-label"></label><input asp-for="Input.Password" class="form-control" autocomplete="new-password" /><small>10+ characters, uppercase, lowercase, number, and symbol.</small></div>
+<div class="mb-4"><label asp-for="Input.ConfirmPassword" class="form-label">Confirm password</label><input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" /></div>
+<button class="btn btn-dark w-100">Create account</button></form><p class="mt-4 mb-0">Already registered? <a asp-page="Login">Sign in</a></p></div>

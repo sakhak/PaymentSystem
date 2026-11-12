@@ -1,0 +1,24 @@
+@page
+@model PaymentSystem.Pages.Admin.IndexModel
+@{ ViewData["Title"] = "Administration"; }
+<div class="section-heading"><div><p class="eyebrow">ADMINISTRATION</p><h1 class="page-title">Workspace administration</h1><p class="text-secondary mb-0">Manage products, control account access, and resolve payment issues.</p></div><a asp-page="/Payments/Index" asp-route-IssuesOnly="true" class="btn btn-outline-dark">@Model.VerificationIssues need attention</a></div>
+<div class="row g-4">
+    <div class="col-lg-4"><a asp-page="Products/Index" class="feature-card action-card"><span class="eyebrow">CATALOG</span><h2>@Model.ProductCount products</h2><p>Manage prices, publish new products, and archive unavailable items.</p><strong>Manage products &rarr;</strong></a></div>
+    <div class="col-lg-4"><a asp-page="Users" class="feature-card action-card"><span class="eyebrow">PEOPLE</span><h2>@Model.UserCount accounts</h2><p>Review registered accounts, assign roles, and manage access.</p><strong>Manage users &rarr;</strong></a></div>
+    <div class="col-lg-4"><a asp-page="/Payments/Index" class="feature-card action-card"><span class="eyebrow">TRANSACTIONS</span><h2>@Model.PaymentCount payments</h2><p>Review order details, bank verification results, and payment history.</p><strong>View payments &rarr;</strong></a></div>
+</div>
+<section class="form-panel mt-4">
+    <div class="section-heading mb-4"><h2 class="h6 mb-0">Bank integration</h2><span class="environment-label @(Model.IsTestEnvironment ? "environment-test" : "")">@(Model.IsTestEnvironment ? "SIT / Test" : "Production")</span></div>
+    <dl class="details-list">
+        <dt>Provider host</dt><dd class="text-break">@Model.ProviderHost</dd>
+        <dt>Receiving account</dt><dd>@(Model.KhqrConfigured ? "Configured" : "Configuration required")</dd>
+        <dt>API credential</dt><dd>@(Model.VerificationConfigured ? "Present · validity checked by provider" : "Not configured")</dd>
+        <dt>Automatic checks</dt><dd>@(Model.AutomaticChecks ? "Enabled · recent pending orders" : "Disabled")</dd>
+        <dt>Needs attention</dt><dd><a asp-page="/Payments/Index" asp-route-IssuesOnly="true">@Model.VerificationIssues payments</a></dd>
+    </dl>
+    <p class="small text-secondary mt-4 mb-0">An expired QR does not mean a bank transfer failed. Automatic reconciliation continues for recent orders, and manual verification remains available for older ones. Only matched transactions are confirmed.</p>
+</section>
+@if (Model.IsTestEnvironment)
+{
+    <div class="environment-notice mt-4"><strong>Real payments require production verification.</strong> SIT cannot confirm transfers made through a real banking app. Configure the production provider and its matching API credential on the server.</div>
+}

@@ -1,0 +1,13 @@
+@page
+@model PaymentSystem.Pages.Admin.UsersModel
+@{ ViewData["Title"] = "User management"; }
+<p class="eyebrow">ADMIN / PEOPLE</p><h1 class="page-title">User management</h1><p class="text-secondary">Manage account access. Deactivated accounts cannot sign in; their orders stay intact.</p>
+@if (Model.Notice != null) { <div class="alert alert-info" role="status">@Model.Notice</div> }
+<form method="get" class="search-bar"><label for="Search" class="visually-hidden">Search users</label><input asp-for="Search" class="form-control" placeholder="Search name or email" /><button class="btn btn-outline-dark">Search</button></form>
+<div class="table-panel table-responsive"><table class="table align-middle"><thead><tr><th>User</th><th>Joined (UTC)</th><th>Access</th></tr></thead><tbody>
+@foreach (var user in Model.Users) { <tr><td><strong>@user.DisplayName</strong><div class="text-secondary small">@user.Email</div></td><td>@user.CreatedAt.ToString("dd MMM yyyy")</td><td>
+@if (user.Id == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value) { <span class="status-badge">Administrator · you</span> }
+else { <form method="post" class="d-flex flex-wrap gap-2 align-items-center"><input type="hidden" name="id" value="@user.Id" /><label class="visually-hidden" for="role-@user.Id">Role for @user.DisplayName</label><select name="role" id="role-@user.Id" class="form-select w-auto"><option value="User" selected="@(!Model.AdminIds.Contains(user.Id))">User</option><option value="Admin" selected="@(Model.AdminIds.Contains(user.Id))">Admin</option></select><label class="form-check-label"><input type="checkbox" name="isActive" value="true" checked="@user.IsActive" /> Active</label><button class="btn btn-sm btn-dark">Save access</button></form> }
+</td></tr> }
+@if (Model.Users.Count == 0) { <tr><td colspan="3" class="empty-state">No users found.</td></tr> }
+</tbody></table></div><p class="small text-secondary">Showing up to 100 matching accounts.</p>
